@@ -1,0 +1,18 @@
+{% extends "auth/layout.html" %}
+
+{% block body  %}
+
+<div class="form-style-6">
+    <h1>Welcome {{ user.username }}</h1>
+
+    <h2>First Name:  {{ user.first_name }}</h2>
+    <h2>Last Name:  {{ user.last_name }}</h2>
+    <h2>Email:  {{ user.email }}</h2>
+    
+<a href="{% url 'password_change' %}"><input class="form-style-6" type="submit" value="Change Password"></a>
+<a href="{% url 'logout' %}"><input class="form-style-6" type="submit" value="Logout"></a>
+</div>
+
+
+  
+{% endblock  %}
