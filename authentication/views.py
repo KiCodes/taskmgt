@@ -33,6 +33,8 @@ class SignUpView(FormView):
     
 class LoginPageView(LoginView):
     template_name = 'auth/login.html'
+    # query field parameter conventionally names as 'next' for routing user to the page they tried to access
+    # before they were rerouted to log in
     redirect_field_name = 'next'
     
     def get_success_url(self):
@@ -47,8 +49,10 @@ class LoginPageView(LoginView):
         return '/auth/profile'
     
     def get(self, request, *args, **kwargs):
+        # prevent an authenticated user from seeing the login page and having to login in twice
+        # redirect user to profile if they have logged in already
         if self.request.user.is_authenticated:
-            return redirect('/auth/index')
+            return redirect('/auth/profile')
         return super().get(request, *args, **kwargs)
 
 class LogoutView(View):
@@ -66,17 +70,25 @@ class ProfileView(DetailView):
         return self.request.user
 
     def get_context_data(self, **kwargs):
+        # super().get_context_data ensures that you're extending the context data provided by the superclass. 
+        # This is important because DetailView already provides some context data by default, like the object being displayed.
+        # you're making sure that this default behavior is preserved while adding your custom context data 
         context = super().get_context_data(**kwargs)
+        # passing the current user as object context to the template
         user = self.get_object()
         context['user'] = user
         return context
     
+    # dispatch is called when Annonymous user tries to make a request on a page
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
+            # rerouting to the login page and attaching a 'next' parameter query to the url with the value of the url user tried to access
             return redirect(f"login?next={request.path}")
         return super().dispatch(request, *args, **kwargs)
 
 
 class ChangePasswordView(PasswordChangeView):
+    # inheriting PasswordChangeView allows us to simply replace the parent class template name and success url 
+    # the form handling is done in the parent class 
     template_name = 'auth/change_password.html'
     success_url = reverse_lazy('profile')
