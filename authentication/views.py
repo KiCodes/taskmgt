@@ -92,3 +92,9 @@ class ChangePasswordView(PasswordChangeView):
     # the form handling is done in the parent class 
     template_name = 'auth/change_password.html'
     success_url = reverse_lazy('profile')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            # rerouting to the login page and attaching a 'next' parameter query to the url with the value of the url user tried to access
+            return redirect(f"login?next={request.path}")
+        return super().dispatch(request, *args, **kwargs)
