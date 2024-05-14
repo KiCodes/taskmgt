@@ -45,16 +45,19 @@ class AddTaskPageView(FormView):
         form.instance.assigned_by = self.request.user
         form.save()
         return super().form_valid(form)
-    
+
+# View for handling moving tasks to the next status
 class MoveTask(View):
     def post(self, request, *args, **kwargs):
         form = MoveTaskForm(request.POST)
         if form.is_valid():
+            # Get the next status selected in the form
             next_status = form.cleaned_data['next_status']
-            # Retrieve the task
+             # Retrieve the task ID from URL kwargs
             task_id = kwargs.get('pk')
+            # Retrieve the task object
             task = Task.objects.get(pk=task_id)
-            # Update the task status
+            # Update the task status to the selected next status
             task.status = next_status
             task.save()
-        return redirect('tasks:index')
+        return redirect('tasks:index')  # Redirect to tasks:index view after updating the task status

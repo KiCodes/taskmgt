@@ -13,8 +13,10 @@
                     <li class="custom-block-topics-listing-info timeline-container">
                         {{ task }}
                         {% if task.status == 'TO DO' %}
+                         <!-- Form to move task to the next status -->
                         <form method="post" action="{% url 'tasks:move_task' task.pk %}">
                             {% csrf_token %}
+                             <!-- Button to submit the form, with the value indicating the next status -->
                             <button class="custom-btn custom-btn:hover" type="submit" name="next_status" value="IN PROGRESS">Move to In Progress</button>
                         </form>
                         {% endif %}
