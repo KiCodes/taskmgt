@@ -1,0 +1,61 @@
+{% extends "tasks/layout.html" %}
+{% block body  %}
+
+<div class="custom-block rounded-pill ">
+    
+    <div class="section-padding">
+        <h1 class="">Tasks</h1>
+        <div class="col">
+            <div class="col">
+                <h2>To Do</h2>
+                <ul>
+                    {% for task in tasks_todo %}
+                    <li class="custom-block-topics-listing-info timeline-container">
+                        {{ task }}
+                        {% if task.status == 'TO DO' %}
+                        <form method="post" action="{% url 'tasks:move_task' task.pk %}">
+                            {% csrf_token %}
+                            <button class="custom-btn custom-btn:hover" type="submit" name="next_status" value="IN PROGRESS">Move to In Progress</button>
+                        </form>
+                        {% endif %}
+                    </li>
+                    {% empty %}
+                    <li>No tasks</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col">
+                <h2>In Progress</h2>
+                <ul>
+                    {% for task in tasks_in_progress %}
+                    <li class="custom-block-topics-listing-info timeline-container">
+                        {{ task }}
+                        {% if task.status == 'IN PROGRESS' %}
+                        <form method="POST" action="{% url 'tasks:move_task' task.pk %}">
+                            {% csrf_token %}
+                            <button class="custom-btn custom-btn:hover" type="submit" name="next_status" value="DONE">Move to Done</button>
+                        </form>
+                        {% endif %}
+                    </li>
+                    {% empty %}
+                    <li>No tasks</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col">
+                <h2>Done</h2>
+                <ul>
+                    {% for task in tasks_done %}
+                    <li class="custom-block-topics-listing-info timeline-container">{{ task }}</li>
+                    {% empty %}
+                    <li>No tasks</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <a href="{% url 'tasks:add_task' %}"><input type="submit" value="Add Task" class="custom-btn custom-btn:hover"></a>
+</div>
+{% endblock %}

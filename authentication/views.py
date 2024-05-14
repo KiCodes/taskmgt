@@ -83,7 +83,7 @@ class ProfileView(DetailView):
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             # rerouting to the login page and attaching a 'next' parameter query to the url with the value of the url user tried to access
-            return redirect(f"login?next={request.path}")
+            return redirect(f"login/?next={request.path}")
         return super().dispatch(request, *args, **kwargs)
 
 

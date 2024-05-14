@@ -1,0 +1,17 @@
+{% extends "tasks/layout.html" %}
+{% block body  %}
+
+<div class="custom-block rounded-pill ">
+    
+    <form action=""  method="post" class="form-style-6 form-control">
+        <h1 class="">Add Task</h1>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <br>   
+        <input type="submit" value="Add"></input>
+    </form> 
+    <br>
+    <br>
+    <a href="{% url 'tasks:index' %}"><input type="submit" value="View Tasks" class="custom-btn custom-btn:hover"></a>
+</div>
+{% endblock  %}
