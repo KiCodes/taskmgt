@@ -3,7 +3,7 @@ from django.db.models.query import QuerySet
 from django.http import HttpRequest
 from django.http.response import HttpResponse as HttpResponse
 from django.shortcuts import redirect
-from django.views.generic import DetailView, FormView, View
+from django.views.generic import DetailView, FormView, View, DeleteView
 from .models import Task
 from .forms import MoveTaskForm, TaskForm
 from django.urls import reverse_lazy
@@ -35,6 +35,12 @@ class TaskPageView(DetailView):
             return redirect(f"auth/login?next={request.path}")
         return super().dispatch(request, *args, **kwargs)
     
+    def post(self, request, *args, **kwargs):
+        if 'delete_tasks' in request.POST:
+            tasks_to_delete = request.POST.getlist('tasks_to_delete')
+            Task.objects.filter(pk__in=tasks_to_delete).delete()
+        return redirect('tasks:index')
+    
 class AddTaskPageView(FormView):
     template_name = 'tasks/add_task.html'
     form_class = TaskForm
@@ -61,3 +67,19 @@ class MoveTask(View):
             task.status = next_status
             task.save()
         return redirect('tasks:index')  # Redirect to tasks:index view after updating the task status
+    
+class DeleteDoneTask(DeleteView):
+    model = Task
+        # template_name = 'tasks/delete_done_tasks.html'  # Create a template for confirmation if needed
+    success_url = reverse_lazy('tasks:index')  # Redirect to the task list page after deletion
+    def post(self, request, *args, **kwargs):
+        # Check if the form was submitted for deleting task
+        if 'delete_tasks' in request.POST:
+        # Retrieve the list of selected task IDs to delete                
+            tasks_to_delete_ids = request.POST.getlist('tasks_to_delete')
+                # Delete the selected tasks
+            Task.objects.filter(pk__in=tasks_to_delete_ids).delete()
+
+            # Redirect to the success URL after deletion
+        return redirect(self.success_url)
+    

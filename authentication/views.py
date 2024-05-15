@@ -3,12 +3,14 @@ from django.http import HttpResponseRedirect
 
 from django.urls import reverse_lazy
 from django.views.generic import FormView, DetailView, View
+
+from authentication.models import UserImage
 from .forms import SignUpForm
 from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.contrib.auth.models import Group
 from django.contrib.auth import logout
 from django.utils.http import url_has_allowed_host_and_scheme
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 
 # Create your views here.
 class SignUpView(FormView):
@@ -76,7 +78,9 @@ class ProfileView(DetailView):
         context = super().get_context_data(**kwargs)
         # passing the current user as object context to the template
         user = self.get_object()
+        image = UserImage.objects.filter(user=user).last()
         context['user'] = user
+        context['image'] = image
         return context
     
     # dispatch is called when Annonymous user tries to make a request on a page
@@ -85,6 +89,7 @@ class ProfileView(DetailView):
             # rerouting to the login page and attaching a 'next' parameter query to the url with the value of the url user tried to access
             return redirect(f"login/?next={request.path}")
         return super().dispatch(request, *args, **kwargs)
+        
 
 
 class ChangePasswordView(PasswordChangeView):
@@ -98,3 +103,20 @@ class ChangePasswordView(PasswordChangeView):
             # rerouting to the login page and attaching a 'next' parameter query to the url with the value of the url user tried to access
             return redirect(f"login?next={request.path}")
         return super().dispatch(request, *args, **kwargs)
+    
+
+from .forms import UserImageForm
+class UploadImageView(View):
+    def get(self, request, *args, **kwargs):
+        form = UserImageForm()
+        return render(request, 'auth/upload_image.html', {'form': form})
+        
+    def post(self, request, *args, **kwargs):
+        form = UserImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.instance.user = self.request.user
+            form.save()
+            return redirect('profile')  # Redirect to profile page upon successful upload
+        else:
+            # If form is not valid, render the form again with errors
+            return render(request, 'auth/upload_image.html', {'form': form})

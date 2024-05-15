@@ -1,5 +1,7 @@
+from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import UserImage
 
 class SignUpForm(UserCreationForm):
 
@@ -9,4 +11,9 @@ class SignUpForm(UserCreationForm):
         # to specify all fields of User Model use fields = '__all__'
         model = User
         fields = ('first_name', 'last_name', 'username', 'email')
+
+class UserImageForm(forms.ModelForm):
+    class Meta:
+        model = UserImage
+        fields = ['image']
 

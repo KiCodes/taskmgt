@@ -6,5 +6,6 @@ app_name = 'tasks'
 urlpatterns = [
     path('', views.TaskPageView.as_view(),name='index'),
     path('add_task', views.AddTaskPageView.as_view(),name='add_task'),
-    path('move_task/<pk>', views.MoveTask.as_view(), name='move_task')
+    path('move_task/<pk>', views.MoveTask.as_view(), name='move_task'),
+    path('delete_done_tasks', views.DeleteDoneTask.as_view(),  name='delete_done_tasks')
 ]

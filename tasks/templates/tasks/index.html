@@ -4,7 +4,7 @@
 <div class="custom-block rounded-pill ">
     
     <div class="section-padding">
-        <h1 class="">Tasks</h1>
+        <h1 class="">Tasks</h1>=
         <div class="col">
             <div class="col">
                 <h2>To Do</h2>
@@ -46,13 +46,24 @@
             </div>
             <div class="col">
                 <h2>Done</h2>
-                <ul>
-                    {% for task in tasks_done %}
-                    <li class="custom-block-topics-listing-info timeline-container">{{ task }}</li>
-                    {% empty %}
-                    <li>No tasks</li>
-                    {% endfor %}
-                </ul>
+                <!-- Form for deleting done tasks -->
+                <form method="post" action="{% url 'tasks:delete_done_tasks' %}">
+                    {% csrf_token %}
+                    <ul>
+                        {% for task in tasks_done %}
+                        <li class="custom-block-topics-listing-info timeline-container">
+                            <!-- checkbox -->
+                            <input type="checkbox" name="tasks_to_delete" value="{{ task.pk }}">
+                            <!-- Display task details -->
+                            {{ task }}
+                        </li>
+                        {% empty %}
+                        <li>No tasks</li>
+                        {% endfor %}
+                    </ul>
+                    <!-- Delete button -->
+                    <input class="custom-btn custom-btn:hover" type="submit" name="delete_tasks" value="Delete Selected">
+                </form>
             </div>
         </div>
     </div>

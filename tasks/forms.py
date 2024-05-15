@@ -13,3 +13,4 @@ class MoveTaskForm(forms.Form):
         ('IN PROGRESS', 'Move to In Progress'),  # Choice to move task to 'In Progress' status
         ('DONE', 'Move to Done'),  # Choice to move task to 'Done' status
     ])
+
